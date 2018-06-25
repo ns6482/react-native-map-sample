@@ -4,66 +4,128 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
-  Text,
-  StyleSheet
+    Button,
+    StyleSheet,
+    View,
+    // Image
 } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 //import ClusteredMapView from 'react-native-maps-super-cluster';
 import image from './images/flag-pink.png';
 
 export default class App extends Component<{}> {
-  render() {
 
-    const coordinates = [];
+    constructor(props) {
+        super(props);
 
-    coordinates.push({
-      key: 0,
-      location: {
-        longitude: -70.23,
-        latitude: -33.23
-      }
-    });
+        const userLatitude = 52.617806;
+        const userLongitude = -1.143139;
 
-    for(let i = 1; i<100; i++) {
+        this.state = {
+            data: [
+                {
+                    id: 1,
+                    customer: "Mr Putney Road",
+                    description: "Interim Breakdown",
+                    latitude: 52.618159,
+                    longitude: -1.134403
+                },
+                {
+                    id: 2,
+                    customer: "Mr Old Saffron Lane",
+                    description: "Boiler Installation",
+                    latitude: 52.615306,
+                    longitude: -1.137658
+                },
+                {
+                    id: 3,
+                    customer: "Mr Filbert Street",
+                    description: "Dishwasher Repair",
+                    latitude: 52.624112,
+                    longitude: -1.136586
+                }
 
-      const location = {
-        longitude: coordinates[i-1].location.longitude + (Math.random() * (i%2 === 0 ? -1 : 1)),
-        latitude: coordinates[i-1].location.latitude + (Math.random() * (i%2 === 0 ? -1 : 1)),
-      };
+            ], isLoading: false, userLatitude, userLongitude
+        };
 
-      coordinates.push({ key: i, location });
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.setState(
+                    {
+                        userLatitude: position.coords.latitude,
+                        userLongitude: position.coords.longitude,
+                    });
+            },
+        );
 
     }
 
-    return (
-      <MapView
-        renderMarker={renderMarker}
-        initialRegion={{
-          longitude: -70.23,
-          latitude: -33.23,
-          latitudeDelta: 9.22,
-          longitudeDelta: 4.21,
-        }}
-        style={StyleSheet.absoluteFillObject}>
+    renderMarker(c) {
+        return (
+            <MapView.Marker
+                key={c.id}
+                image={image}
+                coordinate={{
+                    latitude: c.latitude,
+                    longitude: c.longitude,
+                }}
+                title={c.customer}
+                description={c.description}
+            />
+        );
+    }
 
-        { coordinates.map(({ key, location } ) => <MapView.Marker key={key} image={image} coordinate={location} />) }
+    renderMap() {
+        return (
+            <MapView
+                style={{flex: 1, height: 450}}
+                showsUserLocation
+                initialRegion={{
+                    latitude: this.state.userLatitude,
+                    longitude: this.state.userLongitude,
+                    latitudeDelta: 0.019,
+                    longitudeDelta: 0.019,
+                }}
+            >
+                {this.state.data.map(c => this.renderMarker(c))}
+            </MapView>
+        );
+    }
 
-      </MapView>
-    );
-  }
+    render() {
+
+        return (
+            <View style={styles.container}>
+                <View style={styles.box1}>
+                </View>
+                <View style={styles.box2}>
+                    {this.renderMap()}
+                </View>
+                <View style={styles.box3}>
+
+                </View>
+            </View>
+        );
+    }
 }
 
-function renderMarker({ location }) {
-  return (
-    <MapView.Marker
-      image={image}
-      coordinate={location}
-    >
-      <MapView.Callout>
-        <Text>BiG BiG Callout</Text>
-      </MapView.Callout>
-    </MapView.Marker>
-  );
-}
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    //header
+    box1: {
+        flex: 1,
+        backgroundColor: '#2196F3'
+    },
+    //content
+    box2: {
+        flex: 10,
+    },
+    //footer
+    box3: {
+        flex: 1,
+    }
+});

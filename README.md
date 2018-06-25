@@ -28,5 +28,21 @@ run `~/Library/Android/sdk/tools/emulator @NAME_OF_IMAGE
 once that is running you can run react-native run-android
 
 
+Notes
+
+Make sre airplane mode is off
+
+Might have to do this: 
+
+Debugging might go to the wrong address 10.0.2.2: 
+
+make sure no debugger tabs (localhost:8081) are open
+
+`CMD + M`, dev settings, change host to localhost:8081
+
+rereun android app `react-native run`
+
+
+
 ```
 

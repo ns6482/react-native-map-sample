@@ -42,7 +42,5 @@ make sure no debugger tabs (localhost:8081) are open
 
 rereun android app `react-native run`
 
-
-
 ```
 

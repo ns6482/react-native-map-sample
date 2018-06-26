@@ -12,8 +12,9 @@ Make sure you have the latest version of Android Studio
 
 run the following to update bash file
 
-`export PATH="$HOME/Android/tools:$PATH"
-export PATH="$HOME/Android/platform-tools:$PATH"
+`
+export ANDROID_HOME=~/Library/Android/sdk
+export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 `
 restart the  terminal
 

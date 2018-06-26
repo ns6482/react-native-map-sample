@@ -7,7 +7,7 @@
 import React, {Component} from 'react';
 import {
     Button,
-    StyleSheet,
+    StyleSheet, Text, TouchableOpacity,
     View,
     // Image
 } from 'react-native';
@@ -80,7 +80,7 @@ export default class App extends Component<{}> {
     renderMap() {
         return (
             <MapView
-                style={{flex: 1, height: 450}}
+                style={styles.map}
                 showsUserLocation
                 initialRegion={{
                     latitude: this.state.userLatitude,
@@ -98,13 +98,14 @@ export default class App extends Component<{}> {
 
         return (
             <View style={styles.container}>
-                <View style={styles.box1}>
-                </View>
-                <View style={styles.box2}>
-                    {this.renderMap()}
-                </View>
-                <View style={styles.box3}>
-
+                {this.renderMap()}
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        onPress={() => console.log("go to")}
+                        style={[styles.bubble, styles.button]}
+                    >
+                        <Text>View Jobs</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         );
@@ -114,18 +115,31 @@ export default class App extends Component<{}> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
-    //header
-    box1: {
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    button: {
+        width: 80,
+        paddingHorizontal: 12,
+        alignItems: 'center',
+        marginHorizontal: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        flexAlignment:''
+        marginVertical: 20,
+        backgroundColor: 'transparent',
+    },
+    bubble: {
         flex: 1,
-        backgroundColor: '#2196F3'
-    },
-    //content
-    box2: {
-        flex: 10,
-    },
-    //footer
-    box3: {
-        flex: 1,
+        backgroundColor: 'rgba(255,255,255,0.7)',
+        paddingHorizontal: 18,
+        paddingVertical: 12,
+        borderRadius: 20,
     }
+
 });

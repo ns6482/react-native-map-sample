@@ -6,15 +6,15 @@
 
 import React, {Component} from 'react';
 import {
-    Button,
-    StyleSheet, Text, TouchableOpacity,
+    Button, FlatList,
+    StyleSheet, Text, TouchableHighlight, TouchableOpacity,
     View,
-    // Image
+    Dimensions
 } from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 //import ClusteredMapView from 'react-native-maps-super-cluster';
 import image from './images/flag-pink.png';
-
+// import * as Dimensions from "react-native/Libraries/Utilities/Dimensions";
 export default class App extends Component<{}> {
 
     constructor(props) {
@@ -50,15 +50,15 @@ export default class App extends Component<{}> {
             ], isLoading: false, userLatitude, userLongitude
         };
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                this.setState(
-                    {
-                        userLatitude: position.coords.latitude,
-                        userLongitude: position.coords.longitude,
-                    });
-            },
-        );
+        // navigator.geolocation.getCurrentPosition(
+        //     (position) => {
+        //         this.setState(
+        //             {
+        //                 userLatitude: position.coords.latitude,
+        //                 userLongitude: position.coords.longitude,
+        //             });
+        //     },
+        // );
 
     }
 
@@ -66,7 +66,6 @@ export default class App extends Component<{}> {
         return (
             <MapView.Marker
                 key={c.id}
-                image={image}
                 coordinate={{
                     latitude: c.latitude,
                     longitude: c.longitude,
@@ -94,33 +93,55 @@ export default class App extends Component<{}> {
         );
     }
 
+    renderJobs() {
+        return (
+            <FlatList
+                data={[...this.state.data]}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item, separators}) => (
+                    <TouchableHighlight
+                        onPress={() => this._onPress(item)}
+                        onShowUnderlay={separators.highlight}
+                        onHideUnderlay={separators.unhighlight}>
+                        <View style={{backgroundColor: 'white'}}>
+                            <Text style={styles.jobItem}>{item.customer}</Text>
+                        </View>
+                    </TouchableHighlight>
+                )}
+            />
+        )
+    }
+
     render() {
 
         return (
             <View style={styles.container}>
                 {this.renderMap()}
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                        onPress={() => console.log("go to")}
-                        style={[styles.bubble, styles.button]}
-                    >
-                        <Text>View Jobs</Text>
-                    </TouchableOpacity>
+                {/*<View style={styles.buttonContainer}>*/}
+                    {/*<TouchableOpacity*/}
+                        {/*onPress={() => console.log("go to")}*/}
+                        {/*style={[styles.bubble, styles.button]}*/}
+                    {/*>*/}
+                        {/*<Text>View Jobs</Text>*/}
+                    {/*</TouchableOpacity>*/}
+                {/*</View>*/}
+                <View style={styles.jobs}>
+                    {this.renderJobs()}
                 </View>
             </View>
         );
     }
 }
 
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
+
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 10,
         ...StyleSheet.absoluteFillObject,
         justifyContent: 'flex-end',
         alignItems: 'center',
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject,
     },
     button: {
         width: 80,
@@ -129,17 +150,29 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
     },
     buttonContainer: {
+        flex: 1,
         flexDirection: 'row',
-        flexAlignment:''
         marginVertical: 20,
         backgroundColor: 'transparent',
     },
     bubble: {
-        flex: 1,
         backgroundColor: 'rgba(255,255,255,0.7)',
         paddingHorizontal: 18,
         paddingVertical: 12,
         borderRadius: 20,
+    },
+    map: {
+        flex: 7,
+        width,
+        height
+    },
+    jobs: {
+        flex: 3
+    },
+    jobItem: {
+        padding: 10,
+        fontSize: 18,
+        height: 44
     }
 
 });

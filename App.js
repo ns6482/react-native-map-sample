@@ -14,14 +14,20 @@ import {
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 //import ClusteredMapView from 'react-native-maps-super-cluster';
 import image from './images/flag-pink.png';
-// import * as Dimensions from "react-native/Libraries/Utilities/Dimensions";
+
+
+const {width, height} = Dimensions.get('window');
+
+const ASPECT_RATIO = width / height;
+const LATITUDE = 52.617806;
+const LONGITUDE = -1.143139;
+const LATITUDE_DELTA = 0.0122;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
 export default class App extends Component<{}> {
 
     constructor(props) {
         super(props);
-
-        const userLatitude = 52.617806;
-        const userLongitude = -1.143139;
 
         this.state = {
             data: [
@@ -47,8 +53,15 @@ export default class App extends Component<{}> {
                     longitude: -1.136586
                 }
 
-            ], isLoading: false, userLatitude, userLongitude
+            ], isLoading: false,
+            region: {
+                latitude: LATITUDE,
+                longitude: LONGITUDE,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA
+            }
         };
+
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -76,17 +89,26 @@ export default class App extends Component<{}> {
         );
     }
 
+    goToCoordinate(newCoord) {
+        const {latitude, longitude} = newCoord;
+
+        const coord = {
+            latitude,
+            longitude
+        };
+
+        this.map.animateToCoordinate(coord);
+    }
+
     renderMap() {
         return (
             <MapView
                 style={styles.map}
-                showsUserLocation
-                initialRegion={{
-                    latitude: this.state.userLatitude,
-                    longitude: this.state.userLongitude,
-                    latitudeDelta: 0.019,
-                    longitudeDelta: 0.019,
+                ref={ref => {
+                    this.map = ref;
                 }}
+                showsUserLocation
+                initialRegion={this.state.region}
             >
                 {this.state.data.map(c => this.renderMarker(c))}
             </MapView>
@@ -100,7 +122,7 @@ export default class App extends Component<{}> {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item, separators}) => (
                     <TouchableHighlight
-                        onPress={() => this._onPress(item)}
+                        onPress={() => this.goToCoordinate(item)}
                         onShowUnderlay={separators.highlight}
                         onHideUnderlay={separators.unhighlight}>
                         <View style={{backgroundColor: 'white'}}>
@@ -118,12 +140,12 @@ export default class App extends Component<{}> {
             <View style={styles.container}>
                 {this.renderMap()}
                 {/*<View style={styles.buttonContainer}>*/}
-                    {/*<TouchableOpacity*/}
-                        {/*onPress={() => console.log("go to")}*/}
-                        {/*style={[styles.bubble, styles.button]}*/}
-                    {/*>*/}
-                        {/*<Text>View Jobs</Text>*/}
-                    {/*</TouchableOpacity>*/}
+                {/*<TouchableOpacity*/}
+                {/*onPress={() => console.log("go to")}*/}
+                {/*style={[styles.bubble, styles.button]}*/}
+                {/*>*/}
+                {/*<Text>View Jobs</Text>*/}
+                {/*</TouchableOpacity>*/}
                 {/*</View>*/}
                 <View style={styles.jobs}>
                     {this.renderJobs()}
@@ -132,9 +154,6 @@ export default class App extends Component<{}> {
         );
     }
 }
-
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {

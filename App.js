@@ -50,15 +50,15 @@ export default class App extends Component<{}> {
             ], isLoading: false, userLatitude, userLongitude
         };
 
-        // navigator.geolocation.getCurrentPosition(
-        //     (position) => {
-        //         this.setState(
-        //             {
-        //                 userLatitude: position.coords.latitude,
-        //                 userLongitude: position.coords.longitude,
-        //             });
-        //     },
-        // );
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                this.setState(
+                    {
+                        userLatitude: position.coords.latitude,
+                        userLongitude: position.coords.longitude,
+                    });
+            },
+        );
 
     }
 
